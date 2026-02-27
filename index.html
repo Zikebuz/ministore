@@ -679,6 +679,16 @@
             if (cart.length === 0) {
                 cartItemsContainer.innerHTML = '<p class="text-center my-4">Your cart is empty.</p>';
                 cartTotalEl.textContent = '0.00';
+                const modalEl = document.getElementById('cartModal');
+                if (modalEl && modalEl.classList.contains('show')) {
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                        const instance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                        instance.hide();
+                    } else {
+                        modalEl.classList.remove('show');
+                        modalEl.style.display = 'none';
+                    }
+                }
             } else {
                 let html = '<div class="list-group list-group-flush">';
                 let total = 0;
@@ -728,28 +738,55 @@
             checkoutBtn.disabled = true;
 
             try {
+                const itemsForCheckout = cart.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    price: item.price,
+                    priceId: item.priceId,
+                    image: item.image,
+                    quantity: item.quantity
+                }));
+                sessionStorage.setItem('miniStoreCartBackup', JSON.stringify(itemsForCheckout));
+                cart.splice(0, cart.length);
+                saveCart();
+                updateCartUI();
                 const response = await fetch('/api/checkout', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ items: cart })
+                    body: JSON.stringify({ items: itemsForCheckout })
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
+                    sessionStorage.removeItem('miniStoreCartBackup');
                     window.location.href = data.url;
                 } else {
                     alert('Checkout Error: ' + (data.error || 'Unknown error'));
                     checkoutBtn.innerText = originalText;
                     checkoutBtn.disabled = false;
+                    const backup = sessionStorage.getItem('miniStoreCartBackup');
+                    if (backup) {
+                        const restored = JSON.parse(backup);
+                        cart.splice(0, cart.length, ...restored);
+                        saveCart();
+                        updateCartUI();
+                    }
                 }
             } catch (error) {
                 console.error('Error:', error);
                 alert('An error occurred. Please try again.');
                 checkoutBtn.innerText = originalText;
                 checkoutBtn.disabled = false;
+                const backup = sessionStorage.getItem('miniStoreCartBackup');
+                if (backup) {
+                    const restored = JSON.parse(backup);
+                    cart.splice(0, cart.length, ...restored);
+                    saveCart();
+                    updateCartUI();
+                }
             }
         });
 

@@ -104,6 +104,12 @@
 
     <!-- Download Logic Script -->
     <script>
+        const sid = new URLSearchParams(window.location.search).get('session_id');
+        if (sid) {
+            localStorage.removeItem('miniStoreCart');
+            sessionStorage.removeItem('miniStoreCartBackup');
+        }
+        
         /**
          * Post-Purchase Download Logic
          * 
