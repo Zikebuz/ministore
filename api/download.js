@@ -1,38 +1,43 @@
-/**
- * Vercel Serverless Function for Secure Digital Download
- * 
- * This handler manages the download of the "Vibe Coding Guide" PDF.
- * It performs a security check to ensure the request originates from
- * a valid source (Stripe Checkout or the Thanks Page) to prevent
- * unauthorized direct link sharing.
- * 
- * @param {Object} req - The HTTP request object.
- * @param {Object} res - The HTTP response object.
- */
-export default function handler(req, res) {
-    // Get the referrer URL to identify where the request is coming from
-    const referrer = req.headers.referer || "";
-    
-    // --- Security Check ---
-    // Allow if coming from Stripe (after payment) or the local Thanks page
-    const isFromStripe = referrer.includes("checkout.stripe.com");
-    const isFromThanksPage = referrer.includes("thanks.html");
-
-    // If the source is not authorized, deny access
-    if (!isFromStripe && !isFromThanksPage) {
-        return res.status(403).send("Access Denied: Please complete your purchase to download.");
+export default async function handler(req, res) {
+    const sessionId = req.query.session_id;
+    if (!sessionId) {
+        return res.status(400).send("Missing session_id");
     }
 
-    // --- File Delivery ---
-    // URL to the PDF stored in Vercel Blob Storage (Production)
-    const fileUrl = "https://3mt1vreenw6teplr.public.blob.vercel-storage.com/vibe-coding-guide-Q9df6Fp3zkeWgtDn5GInyf1hrEugXm.pdf";
-    
-    // Fallback for local development (commented out for production)
-    // const fileUrl = "/private/vibe-coding-guide.pdf"; 
+    const stripeKey = process.env.STRIPE_SECRET_KEY;
+    if (!stripeKey) {
+        return res.status(500).send("Server not configured");
+    }
 
-    // Set the Content-Disposition header to force a download with a clean filename
+    const stripeRes = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}`, {
+        headers: { Authorization: `Bearer ${stripeKey}` }
+    });
+
+    if (!stripeRes.ok) {
+        return res.status(403).send("Invalid session");
+    }
+
+    const session = await stripeRes.json();
+    const paid = session.payment_status === "paid" || session.status === "complete";
+    if (!paid) {
+        return res.status(402).send("Payment required");
+    }
+
+    const fileUrl = process.env.FILE_URL;
+    if (!fileUrl) {
+        return res.status(500).send("File not available");
+    }
+
+    const fileRes = await fetch(process.env.FILE_URL, {
+        headers: { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` }
+    });
+    if (!fileRes.ok) {
+        return res.status(500).send("Unable to fetch file");
+    }
+
+    const contentType = fileRes.headers.get("content-type") || "application/pdf";
+    const buf = Buffer.from(await fileRes.arrayBuffer());
+    res.setHeader("Content-Type", contentType);
     res.setHeader("Content-Disposition", "attachment; filename=Vibe-Coding-Guide.pdf");
-    
-    // Redirect the user to the file URL to begin the download
-    return res.redirect(fileUrl);
+    return res.status(200).send(buf);
 }

@@ -104,26 +104,17 @@
 
     <!-- Download Logic Script -->
     <script>
-        // Parse URL parameters to check for digital product type
         const urlParams = new URLSearchParams(window.location.search);
-        
-        if (urlParams.get('type') === 'digital') {
-            // Update UI for digital product success
-            document.getElementById('thanks-message').innerText = "Thank you for purchasing Vibe Coding!";
-            document.getElementById('sub-message').innerText = "Preparing your download...";
-
-            // Wait 2 seconds before initiating download
+        const sessionId = urlParams.get('session_id');
+        if (sessionId) {
+            document.getElementById('thanks-message').innerText = "Thank you for your purchase!";
+            document.getElementById('sub-message').innerText = "Preparing your secure download...";
             setTimeout(() => {
-                // Check if running in a local development environment
                 const isLocal = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
-
                 if (isLocal) {
-                    console.log("Local Test Mode: Downloading directly from private folder.");
-                    // In local test, point to the local file copy
-                    window.location.href = "./private/vibe-coding-guide.pdf"; 
+                    window.location.href = "./private/vibe-coding-guide.pdf";
                 } else {
-                    // In production (Vercel), use the secure API endpoint
-                    window.location.href = "/api/download";
+                    window.location.href = "/api/download?session_id=" + encodeURIComponent(sessionId);
                 }
             }, 2000);
         }
