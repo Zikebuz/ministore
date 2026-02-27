@@ -104,19 +104,36 @@
 
     <!-- Download Logic Script -->
     <script>
+        /**
+         * Post-Purchase Download Logic
+         * 
+         * 1. Checks for a Stripe Session ID in the URL query parameters.
+         * 2. Updates the UI to show a "Processing" state.
+         * 3. Redirects the user to the secure download endpoint after a short delay.
+         */
+        
+        // Check for session_id in URL to determine if this is a post-purchase visit
         const urlParams = new URLSearchParams(window.location.search);
         const sessionId = urlParams.get('session_id');
+
         if (sessionId) {
+            // Update UI to reflect digital product processing
             document.getElementById('thanks-message').innerText = "Thank you for your purchase!";
             document.getElementById('sub-message').innerText = "Preparing your secure download...";
+            
+            // Initiate download redirect
             setTimeout(() => {
+                // Determine environment: Localhost (dev) vs Vercel (prod)
                 const isLocal = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
+                
                 if (isLocal) {
+                    // Dev mode: serve local file directly for testing
                     window.location.href = "./private/vibe-coding-guide.pdf";
                 } else {
+                    // Prod mode: Call serverless function to verify Stripe session and serve file securely
                     window.location.href = "/api/download?session_id=" + encodeURIComponent(sessionId);
                 }
-            }, 2000);
+            }, 2000); // 2-second delay for better UX
         }
     </script>
 </body>

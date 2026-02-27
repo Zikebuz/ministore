@@ -22,7 +22,12 @@ This document details the functional requirements and the technology stack chose
 - **Order Confirmation:** A dedicated "Thank You" page (`thanks.html`) shown after a successful purchase.
 - **Secure Digital Delivery:**
   - Digital files must not be directly accessible via public URL to prevent unauthorized sharing.
-  - The system must verify that the user came from a valid source (Stripe or the Thanks page) before serving the file.
+  - The system must verify the purchase by validating the **Stripe Checkout Session ID** via the Stripe API before serving the file.
+
+### 4. Security & Compliance
+- **Session Validation:** Ensure that download links are only valid for verified purchases.
+- **Content Security Policy:** Implement CSP headers to mitigate XSS attacks.
+- **Environment Variables:** Securely store API keys and private URLs.
 
 ## Technology Stack
 
@@ -44,5 +49,5 @@ This document details the functional requirements and the technology stack chose
 - **Stripe:** Handles all payment processing via hosted Payment Links.
 
 ## Key Design Decisions
-- **No Database:** To keep the project lightweight and "serverless", we avoid a traditional database. Product details are hardcoded in HTML, and order verification relies on referrer checks (sufficient for this scale).
+- **No Database:** To keep the project lightweight and "serverless", we avoid a traditional database. Product details are hardcoded in HTML, and order verification relies on Stripe API session checks (sufficient for this scale).
 - **Client-Side Theme Logic:** Theme preference is handled entirely in the browser using `localStorage` and CSS attribute selectors (`[data-bs-theme="dark"]`).

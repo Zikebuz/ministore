@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mini Store - Premium Digital Products</title>
     
-    <!-- Bootstrap 5.3 CSS -->
+    <!-- Bootstrap 5.3 CSS: Core framework for responsive design and components -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Bootstrap Icons -->
+    <!-- Bootstrap Icons: For UI elements like cart, social media, and theme toggle -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
@@ -428,7 +428,10 @@
 
     <!-- Application Logic -->
     <script>
-        // --- Dark/Light Mode Management ---
+        /**
+         * Dark/Light Mode Management
+         * Handles the switching of themes and persistence via localStorage.
+         */
         const themeToggle = document.getElementById('themeToggle');
         const themeIcon = document.getElementById('themeIcon');
         const htmlElement = document.documentElement;
@@ -453,7 +456,8 @@
         /**
          * Applies the selected theme to the entire application.
          * Updates Body, Navbar, Footer, Buttons, and Icons.
-         * @param {string} theme - 'dark' or 'light'
+         * 
+         * @param {string} theme - The theme to apply ('dark' or 'light').
          */
         function setTheme(theme) {
             htmlElement.setAttribute('data-bs-theme', theme);
@@ -502,18 +506,18 @@
                 footer.classList.remove('bg-dark', 'text-light');
                 footer.classList.add('bg-light', 'text-dark');
                 
-                // Buttons (Invert for contrast)
+                // Buttons
                 buyButtons.forEach(btn => {
                     btn.classList.remove('btn-light');
                     btn.classList.add('btn-dark');
                 });
             }
         }
-
-        // Set current year in footer
-        document.getElementById("year").textContent = new Date().getFullYear();
+        
+        // --- Dynamic Year for Footer ---
+        document.getElementById('year').textContent = new Date().getFullYear();
     </script>
-
+    
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
