@@ -206,6 +206,28 @@
             text-decoration: underline;
         }
 
+        /* Theme-aware modal styles */
+        [data-bs-theme="dark"] .modal-content {
+            background-color: #212529;
+            color: #f8f9fa;
+        }
+        [data-bs-theme="light"] .modal-content {
+            background-color: #ffffff;
+            color: #212529;
+        }
+        [data-bs-theme="dark"] .modal-header,
+        [data-bs-theme="dark"] .modal-body {
+            border-color: rgba(255,255,255,0.1);
+        }
+        [data-bs-theme="light"] .modal-header,
+        [data-bs-theme="light"] .modal-body {
+            border-color: rgba(0,0,0,0.1);
+        }
+        /* Close button contrast */
+        [data-bs-theme="dark"] .btn-close {
+            filter: invert(1);
+        }
+
         /* --- Navbar Social Icons --- */
         .nav-social-icon {
             color: #f8f9fa;
@@ -324,7 +346,7 @@
                 <div class="col-md-3 mb-3">
                     <h5>About Us</h5>
                     <p>
-                        Mini Store is an online store for Mini Store. We offer a wide range of digital products including software, web apps, ebooks, and more.
+                      Mini Store is your one-stop online shop for premium physical and digital goods—from sleek software and web apps to bestselling eBooks and beyond.
                     </p>
                 </div>
                 
@@ -377,10 +399,10 @@
     <!-- Privacy Policy Modal -->
     <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="background-color: var(--bs-body-bg); color: var(--bs-body-color);">
+            <div class="modal-content">
                 <div class="modal-header border-secondary">
                     <h5 class="modal-title" id="privacyModalLabel">Privacy Policy</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p>We value your privacy. This policy outlines how we collect, use, and protect your personal information when you use our website. We do not sell your data to third parties. All payment processing is securely handled by Stripe. By using our site, you consent to our privacy policy.</p>
@@ -392,10 +414,10 @@
     <!-- Terms of Service Modal -->
     <div class="modal fade" id="tosModal" tabindex="-1" aria-labelledby="tosModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="background-color: var(--bs-body-bg); color: var(--bs-body-color);">
+            <div class="modal-content">
                 <div class="modal-header border-secondary">
                     <h5 class="modal-title" id="tosModalLabel">Terms of Service</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p>By using this site, you agree that the content provided is for informational purposes. All projects, code samples, and intellectual property are property of Mini Store unless otherwise stated. Unauthorized duplication or commercial use without consent is prohibited.</p>
