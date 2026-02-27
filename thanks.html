@@ -121,8 +121,9 @@
         // Check for session_id in URL to determine if this is a post-purchase visit
         const urlParams = new URLSearchParams(window.location.search);
         const sessionId = urlParams.get('session_id');
+        const shouldDownload = urlParams.get('download') === '1';
 
-        if (sessionId) {
+        if (sessionId && shouldDownload) {
             // Update UI to reflect digital product processing
             document.getElementById('thanks-message').innerText = "Thank you for your purchase!";
             document.getElementById('sub-message').innerText = "Preparing your secure download...";

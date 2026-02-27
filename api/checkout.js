@@ -44,9 +44,12 @@ export default async function handler(req, res) {
         const origin = `${protocol}://${host}`;
         
         // Set success and cancel URLs
-        // 'session_id={CHECKOUT_SESSION_ID}' is a template variable replaced by Stripe
-        // It is CRITICAL for the success page to verify the payment later.
-        params.append('success_url', `${origin}/thanks.html?session_id={CHECKOUT_SESSION_ID}`);
+        const hasDigitalItem = items.some(item => item.id === 'vibe-coding-book');
+        const baseSuccessUrl = `${origin}/thanks.html`;
+        const successUrl = hasDigitalItem
+            ? `${baseSuccessUrl}?session_id={CHECKOUT_SESSION_ID}&download=1`
+            : baseSuccessUrl;
+        params.append('success_url', successUrl);
         params.append('cancel_url', `${origin}/index.html`);
 
         // Add line items to the request
