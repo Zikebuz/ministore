@@ -9,7 +9,6 @@ This document outlines the file and directory organization for the Mini Store pr
 - `README.md`: **Project Documentation**. Instructions for installation, usage, configuration, and deployment.
 - `folder-structure.md`: **Project Structure**. This file, describing the organization of the codebase.
 - `requirement.md`: **Requirements & Tech Stack**. Detailed list of features, functional requirements, and technologies used.
-- `prompt.md`: **Reconstruction Guide**. Step-by-step AI prompts to rebuild this project from scratch.
 - `.gitignore`: **Git Configuration**. Specifies files and directories to be ignored by Git (e.g., system files, private keys).
 
 ## /api
@@ -31,11 +30,6 @@ Contains **Vercel Serverless Functions** for backend logic.
 
 Stores static assets for the frontend.
 
+- `favicon.png`: Site favicon used in the browser tab.
 - `rolex-diamond.jpg`: Product image for the physical item.
 - `vibe-coding-cover.jpg`: Product image for the digital E-Book.
-
-## /private
-
-Used for local development and testing.
-
-- `vibe-coding-guide.pdf`: A local copy of the digital product. In production, this should be stored in Vercel Blob Storage or AWS S3, not committed to the repository if sensitive.
