@@ -1,13 +1,15 @@
 # Mini Store - Premium Physical & Digital Products
 
-A modern, responsive e-commerce landing page for selling physical and digital products securely. Built with Bootstrap 5 and vanilla JavaScript, featuring a robust dark/light mode, a functional shopping cart, and secure digital download handling via Vercel Serverless Functions.
+A modern, responsive e-commerce landing page for selling physical and digital products securely. Built with Bootstrap 5 and vanilla JavaScript, featuring a robust dark/light mode, a functional shopping cart, scrollspy navigation, a back-to-top button, and secure digital download handling via Vercel Serverless Functions.
 
 ## Features
 
 - **Responsive Design:** Optimized for mobile, tablet, and desktop.
 - **Theme Support:** User-selectable Dark/Light mode with persistence (LocalStorage).
+- **Scrollspy & Back-To-Top:** Scroll-aware navbar highlighting and a floating back-to-top button.
 - **Shopping Cart:** Add items, adjust quantities, and checkout via a modal interface.
-- **Stripe Checkout:** Secure payment processing using Stripe's hosted checkout.
+- **Cart Safety:** Cart clears on successful checkout, auto-closes when empty, and restores from backup if checkout fails.
+- **Stripe Checkout:** Secure payment processing using Stripe's hosted checkout, with billing address collected when physical items are present.
 - **Secure Digital Downloads:** Digital products are protected and only accessible after a verified purchase.
 - **Serverless Architecture:** Backend logic runs on Vercel Serverless Functions.
 
@@ -46,22 +48,26 @@ Set the following variables in your Vercel Project Settings:
 
 -   **Browse Products:** View available products on the homepage.
 -   **Theme Toggle:** Switch between Dark and Light modes using the moon/sun icon in the navbar.
+-   **Scroll Navigation:** Use the scrollspy-enhanced navbar and back-to-top button for quick navigation.
 -   **Add to Cart:** Click the cart icon on product cards to add them to your shopping cart.
 -   **Manage Cart:** Click the cart icon in the footer or navbar (if enabled) to view and edit cart items.
--   **Checkout:** Click "Checkout" in the cart modal to be redirected to Stripe.
--   **Download:** After purchase, you will be redirected to the `thanks.html` page where the digital download will be initiated automatically.
+-   **Checkout:** Click "Checkout" in the cart modal to be redirected to Stripe. The cart is cleared on success, and a backup is used to restore it if checkout fails.
+-   **Billing Address:** When the cart contains physical products, Stripe Checkout will require a billing address.
+-   **Download:** After purchasing a digital product (or a mixed cart that includes it), you will be redirected to the `thanks.html` page where the digital download will be initiated automatically.
 
 ## Project Structure
 
 ```
 /
 ├── api/
-│   ├── checkout.js       # Creates Stripe Checkout sessions
-│   └── download.js       # Verifies payment and streams file
+│   ├── checkout.js       # Creates Stripe Checkout sessions and configures success URLs and billing address collection
+│   └── download.js       # Verifies payment and streams the digital file
 ├── images/               # Product images
 ├── private/              # Local testing files (not for production)
-├── index.html            # Main store page with cart logic
-├── thanks.html           # Order confirmation page
+├── index.html            # Main store page with cart logic, scrollspy, back-to-top, and theming
+├── thanks.html           # Order confirmation page with theme support and conditional digital download
+├── requirement.md        # Requirements & tech stack
+├── folder-structure.md   # Project structure overview
 └── README.md             # Project documentation
 ```
 
