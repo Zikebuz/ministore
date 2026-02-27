@@ -16,7 +16,7 @@ A modern, responsive e-commerce landing page for selling physical and digital pr
 1.  **Clone the repository:**
     ```bash
     git clone https://github.com/Zikebuz/ministore.git
-    cd static
+    cd ministore
     ```
 
 2.  **Local Development:**
