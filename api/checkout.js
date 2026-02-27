@@ -45,12 +45,17 @@ export default async function handler(req, res) {
         
         // Set success and cancel URLs
         const hasDigitalItem = items.some(item => item.id === 'vibe-coding-book');
+        const hasPhysicalItem = items.some(item => item.id !== 'vibe-coding-book');
         const baseSuccessUrl = `${origin}/thanks.html`;
         const successUrl = hasDigitalItem
             ? `${baseSuccessUrl}?session_id={CHECKOUT_SESSION_ID}&download=1`
             : baseSuccessUrl;
         params.append('success_url', successUrl);
         params.append('cancel_url', `${origin}/index.html`);
+
+        if (hasPhysicalItem) {
+            params.append('billing_address_collection', 'required');
+        }
 
         // Add line items to the request
         // Stripe expects line_items[0][price], line_items[0][quantity], etc.
