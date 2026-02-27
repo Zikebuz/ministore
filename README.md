@@ -1,76 +1,74 @@
 # Mini Store - Premium Physical & Digital Products
 
-A modern, responsive e-commerce landing page for selling physical and digital products securely. Built with **Bootstrap 5.3** and vanilla **JavaScript**, featuring a robust dark/light mode and secure digital download handling via **Vercel Serverless Functions**.
+A modern, responsive e-commerce landing page for selling physical and digital products securely. Built with Bootstrap 5 and vanilla JavaScript, featuring a robust dark/light mode, a functional shopping cart, and secure digital download handling via Vercel Serverless Functions.
 
 ## Features
-- **Responsive Design:** Fully responsive layout using Bootstrap 5.3.
-- **Dark/Light Mode:** Persistent theme toggle using LocalStorage.
-- **Secure Digital Delivery:** Serverless function (`/api/download`) verifies Stripe payments before serving files.
-- **Glassmorphism UI:** Modern aesthetic with translucent elements and smooth animations.
-- **Stripe Integration:** Direct integration with Stripe Payment Links.
+
+- **Responsive Design:** Optimized for mobile, tablet, and desktop.
+- **Theme Support:** User-selectable Dark/Light mode with persistence (LocalStorage).
+- **Shopping Cart:** Add items, adjust quantities, and checkout via a modal interface.
+- **Stripe Checkout:** Secure payment processing using Stripe's hosted checkout.
+- **Secure Digital Downloads:** Digital products are protected and only accessible after a verified purchase.
+- **Serverless Architecture:** Backend logic runs on Vercel Serverless Functions.
 
 ## Installation
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/Zikebuz/ministore.git
-    cd ministore
+    git clone <repository-url>
+    cd static
     ```
 
 2.  **Local Development:**
     Simply open `index.html` in your web browser.
     
-    *Optional:* For a better development experience (hot reloading), use a local server like `live-server` or VS Code's "Live Server" extension.
+    *Note:* The checkout functionality requires a backend environment. To test checkout locally, you would need to use `vercel dev` or deploy to Vercel. However, the frontend UI (cart, theme) works directly in the browser.
 
 ## Configuration
 
-1.  **Stripe Setup:** Create a new Payment Link in your Stripe Dashboard.
-2.  **Environment Variables (Vercel):**
-    - `STRIPE_SECRET_KEY`: Your Stripe Secret Key (sk_test_...).
-    - `FILE_URL`: The URL of the private file to serve (e.g., from Vercel Blob).
-    - `BLOB_READ_WRITE_TOKEN`: Token to access Vercel Blob (if using Blob storage).
-3.  **Redirect:** Configure the Stripe confirmation page to redirect to your deployed `thanks.html` with the session ID:
-    `https://your-project.vercel.app/thanks.html?session_id={CHECKOUT_SESSION_ID}`
+This project requires environment variables to function correctly on Vercel.
+
+### Environment Variables
+
+Set the following variables in your Vercel Project Settings:
+
+- `STRIPE_SECRET_KEY`: Your Stripe Secret Key (starts with `sk_test_...` or `sk_live_...`).
+- `FILE_URL`: The direct URL to your digital product file (e.g., stored in Vercel Blob or S3).
+- `BLOB_READ_WRITE_TOKEN`: (Optional) If using Vercel Blob with restricted access, provide the token here.
+
+### Stripe Setup
+
+1.  **Create Products:** Create your products in the Stripe Dashboard.
+2.  **Get Price IDs:** Copy the Price ID (e.g., `price_1T5Ad...`) for each product.
+3.  **Update `index.html`:** Update the `data-price-id` attributes in the "Add to Cart" buttons in `index.html` with your actual Stripe Price IDs.
 
 ## Usage
 
-1.  **Browse Products:** View available products on the homepage.
-2.  **Theme Toggle:** Switch between Dark and Light modes using the moon/sun icon in the navbar. The preference is saved to your browser's local storage.
-3.  **Purchase:** Click "Buy Now" to be redirected to the Stripe checkout page.
-4.  **Order Confirmation:** After a successful purchase, you will be redirected to the `thanks.html` page.
-5.  **Secure Download:** The `thanks.html` page will automatically validate your session ID. If valid, it will initiate the secure download of your digital product.
+-   **Browse Products:** View available products on the homepage.
+-   **Theme Toggle:** Switch between Dark and Light modes using the moon/sun icon in the navbar.
+-   **Add to Cart:** Click the cart icon on product cards to add them to your shopping cart.
+-   **Manage Cart:** Click the cart icon in the footer or navbar (if enabled) to view and edit cart items.
+-   **Checkout:** Click "Checkout" in the cart modal to be redirected to Stripe.
+-   **Download:** After purchase, you will be redirected to the `thanks.html` page where the digital download will be initiated automatically.
 
-## Environment
-
-This project is designed to be hosted on **Vercel**.
-
--   **Frontend:** Static HTML/CSS/JS served directly.
--   **Backend:** Vercel Serverless Functions (`/api/download.js`) handle secure file delivery.
--   **Storage:** Vercel Blob Storage (or any secure URL) is used to host the PDF files.
-
-### Directory Structure
+## Project Structure
 
 ```
 /
 ├── api/
-│   └── download.js       # Serverless function for secure downloads (Node.js)
+│   ├── checkout.js       # Creates Stripe Checkout sessions
+│   └── download.js       # Verifies payment and streams file
 ├── images/               # Product images
 ├── private/              # Local testing files (not for production)
-├── index.html            # Main landing page (Product Showcase)
-├── thanks.html           # Order confirmation & download redirect page
-├── README.md             # Project documentation
-├── requirement.md        # Detailed requirements and tech stack
-└── folder-structure.md   # Folder structure overview
+├── index.html            # Main store page with cart logic
+├── thanks.html           # Order confirmation page
+└── README.md             # Project documentation
 ```
 
-## Security & Audit
+## Security
 
-This repository follows strict security and hygiene standards:
-
--   **Digital Downloads:** The `/api/download.js` function implements a **Stripe Session Verification**. It calls the Stripe API to confirm that the session ID provided in the URL corresponds to a completed and paid session before serving the file.
--   **Content Security Policy (CSP):** `thanks.html` includes a CSP header to restrict script and resource loading to trusted domains (Stripe, CDNs).
--   **Hidden Source:** The actual location of the file (`FILE_URL`) is kept in environment variables and never exposed to the client.
--   **Code Hygiene:** All files are formatted and include inline documentation for maintainability.
+-   **Digital Downloads:** The `/api/download.js` function verifies the Stripe Session ID to ensure the payment was successful before serving the file.
+-   **Environment Variables:** Sensitive keys (Stripe Secret) are stored in server-side environment variables, never exposed to the client.
 
 ## License
 

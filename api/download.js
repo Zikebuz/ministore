@@ -1,67 +1,90 @@
+
 /**
- * Vercel Serverless Function for Secure Digital Downloads.
+ * Vercel Serverless Function: /api/download
  * 
- * @description
- * This function handles the secure delivery of digital products. It acts as a gatekeeper
- * by verifying the Stripe Checkout Session ID to ensure the user has actually purchased 
- * the product. If verified, it fetches the file from a secure source (e.g., Vercel Blob) 
- * and streams it to the user.
+ * Handles secure digital file delivery.
+ * 1. Verifies the Stripe Checkout Session ID to ensure payment was successful.
+ * 2. Fetches the protected file from a secure URL (e.g., Vercel Blob).
+ * 3. Streams the file to the client with the correct headers.
  * 
- * @param {import('@vercel/node').VercelRequest} req - The incoming request object.
- * @param {import('@vercel/node').VercelResponse} res - The outgoing response object.
+ * Environment Variables:
+ * - STRIPE_SECRET_KEY: To verify the session with Stripe.
+ * - FILE_URL: The direct URL to the protected file.
+ * - BLOB_READ_WRITE_TOKEN: (Optional) Token for accessing Vercel Blob if needed.
  */
+
 export default async function handler(req, res) {
-    // 1. Get Session ID from query parameters
+    // 1. Input Validation: Check for session_id query parameter
     const sessionId = req.query.session_id;
     if (!sessionId) {
-        return res.status(400).send("Missing session_id");
+        return res.status(400).send("Missing session_id parameter");
     }
 
-    // 2. Check for Stripe Secret Key
+    // 2. Configuration Check
     const stripeKey = process.env.STRIPE_SECRET_KEY;
     if (!stripeKey) {
-        return res.status(500).send("Server not configured: Missing Stripe Key");
+        console.error("Missing STRIPE_SECRET_KEY");
+        return res.status(500).send("Server configuration error");
     }
 
-    // 3. Verify Session with Stripe API
-    // We call Stripe to get the session details to confirm payment status.
-    const stripeRes = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}`, {
-        headers: { Authorization: `Bearer ${stripeKey}` }
-    });
+    try {
+        // 3. Verify Payment with Stripe
+        // Retrieve the session details from Stripe API
+        const stripeRes = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}`, {
+            headers: { Authorization: `Bearer ${stripeKey}` }
+        });
 
-    if (!stripeRes.ok) {
-        return res.status(403).send("Invalid session");
+        if (!stripeRes.ok) {
+            console.error("Stripe Session Verification Failed");
+            return res.status(403).send("Invalid session");
+        }
+
+        const session = await stripeRes.json();
+
+        // Check if the payment status is 'paid' or 'complete'
+        const isPaid = session.payment_status === "paid" || session.status === "complete";
+        if (!isPaid) {
+            return res.status(402).send("Payment required");
+        }
+
+        // 4. Fetch the Protected File
+        const fileUrl = process.env.FILE_URL;
+        if (!fileUrl) {
+            console.error("Missing FILE_URL");
+            return res.status(500).send("File source not configured");
+        }
+
+        // Fetch the file from the secure storage (e.g., Vercel Blob)
+        // We pass the BLOB_READ_WRITE_TOKEN if it exists (for Vercel Blob auth)
+        const fetchOptions = {};
+        if (process.env.BLOB_READ_WRITE_TOKEN) {
+            fetchOptions.headers = { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` };
+        }
+
+        const fileRes = await fetch(fileUrl, fetchOptions);
+
+        if (!fileRes.ok) {
+            console.error(`Failed to fetch file from source: ${fileRes.status}`);
+            return res.status(500).send("Unable to retrieve file");
+        }
+
+        // 5. Stream File to Client
+        // Get the content type (default to PDF if unknown)
+        const contentType = fileRes.headers.get("content-type") || "application/pdf";
+        
+        // Convert the file stream to a Buffer
+        const arrayBuffer = await fileRes.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        // Set response headers for file download
+        res.setHeader("Content-Type", contentType);
+        res.setHeader("Content-Disposition", "attachment; filename=Vibe-Coding-Guide.pdf");
+        
+        // Send the file data
+        return res.status(200).send(buffer);
+
+    } catch (error) {
+        console.error("Download Handler Error:", error);
+        return res.status(500).send("Internal Server Error");
     }
-
-    const session = await stripeRes.json();
-    
-    // 4. Check Payment Status
-    const paid = session.payment_status === "paid" || session.status === "complete";
-    if (!paid) {
-        return res.status(402).send("Payment required");
-    }
-
-    // 5. Retrieve File URL from Environment Variables
-    const fileUrl = process.env.FILE_URL;
-    if (!fileUrl) {
-        return res.status(500).send("File configuration missing");
-    }
-
-    // 6. Fetch the Secure File (from Blob Storage)
-    const fileRes = await fetch(process.env.FILE_URL, {
-        headers: { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` }
-    });
-    if (!fileRes.ok) {
-        return res.status(500).send("Unable to fetch source file");
-    }
-
-    // 7. Stream File to User
-    // Set appropriate headers for file download
-    const contentType = fileRes.headers.get("content-type") || "application/pdf";
-    const buf = Buffer.from(await fileRes.arrayBuffer());
-    
-    res.setHeader("Content-Type", contentType);
-    res.setHeader("Content-Disposition", "attachment; filename=Vibe-Coding-Guide.pdf");
-    
-    return res.status(200).send(buf);
 }

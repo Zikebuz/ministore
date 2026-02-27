@@ -15,19 +15,20 @@ This document details the functional requirements and the technology stack chose
 - **Support for Multiple Product Types:**
   - **Physical Products:** Tangible items (e.g., Luxury Watch) that require shipping.
   - **Digital Products:** Downloadable items (e.g., E-Book) that are delivered instantly.
-- **Product Cards:** Display product image, title, description, and a "Buy Now" button.
+- **Product Cards:** Display product image, title, description, and "Buy Now" / "Add to Cart" buttons.
 
-### 3. E-Commerce Functionality
-- **Payment Integration:** Use Stripe Payment Links for secure checkout.
+### 3. Shopping Cart Functionality
+- **Cart Management:** Add items to a shopping cart using local storage to persist selections.
+- **Cart UI:** A modal popup to view cart contents, adjust quantities, and remove items.
+- **Theme Awareness:** The cart modal and its components must adapt to the current theme (dark/light mode).
+- **Checkout Process:** A "Checkout" button in the cart that initiates the Stripe payment flow.
+
+### 4. E-Commerce Functionality
+- **Payment Integration:** Use Stripe Checkout for secure payment processing.
 - **Order Confirmation:** A dedicated "Thank You" page (`thanks.html`) shown after a successful purchase.
 - **Secure Digital Delivery:**
   - Digital files must not be directly accessible via public URL to prevent unauthorized sharing.
-  - The system must verify the purchase by validating the **Stripe Checkout Session ID** via the Stripe API before serving the file.
-
-### 4. Security & Compliance
-- **Session Validation:** Ensure that download links are only valid for verified purchases.
-- **Content Security Policy:** Implement CSP headers to mitigate XSS attacks.
-- **Environment Variables:** Securely store API keys and private URLs.
+  - The system must verify payment status (via Stripe Session ID) before serving the file.
 
 ## Technology Stack
 
@@ -35,19 +36,24 @@ This document details the functional requirements and the technology stack chose
 - **HTML5:** Semantic markup for structure.
 - **CSS3:** Custom styling with CSS Variables for theming.
 - **Bootstrap 5.3:** CSS framework for responsive grid, components (Navbar, Cards, Modals), and utility classes.
-- **JavaScript (ES6+):** Vanilla JS for DOM manipulation, theme toggling logic, and URL parameter handling.
+- **JavaScript (ES6+):** Vanilla JS for DOM manipulation, theme toggling, cart logic, and API communication.
 
 ### Backend / Serverless
-- **Vercel Serverless Functions:** Used to create the secure download endpoint (`/api/download`).
-- **Node.js:** The runtime environment for the serverless function.
+- **Vercel Serverless Functions:**
+  - `/api/checkout.js`: Creates Stripe Checkout sessions.
+  - `/api/download.js`: Verifies payment and streams the digital file securely.
+- **Node.js:** The runtime environment for serverless functions.
 
 ### Storage & Hosting
 - **Vercel:** Hosting platform for both the static frontend and serverless backend.
 - **Vercel Blob Storage:** Cloud storage for hosting the digital product files securely (accessed via the API).
+- **Local Storage:** Browser storage for persisting theme preferences and cart data.
 
 ### Payment Processing
-- **Stripe:** Handles all payment processing via hosted Payment Links.
+- **Stripe:** Handles all payment processing via hosted Checkout pages.
+- **Stripe API:** Direct integration via serverless functions to create sessions and verify payments.
 
 ## Key Design Decisions
-- **No Database:** To keep the project lightweight and "serverless", we avoid a traditional database. Product details are hardcoded in HTML, and order verification relies on Stripe API session checks (sufficient for this scale).
+- **No Database:** To keep the project lightweight and "serverless", we avoid a traditional database. Product details are hardcoded in HTML, and order verification relies on Stripe Session validation.
 - **Client-Side Theme Logic:** Theme preference is handled entirely in the browser using `localStorage` and CSS attribute selectors (`[data-bs-theme="dark"]`).
+- **Serverless Checkout:** Instead of static payment links, we generate dynamic checkout sessions to allow for cart functionality and secure verification.

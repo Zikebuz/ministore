@@ -256,6 +256,11 @@
         [data-bs-theme="dark"] .btn-close {
             filter: invert(1);
         }
+        [data-bs-theme="light"] .btn-close {
+            filter: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cline x1='2' y1='2' x2='14' y2='14' stroke='rgba(33,37,41,0.95)' stroke-width='2'/%3e%3cline x1='14' y1='2' x2='2' y2='14' stroke='rgba(33,37,41,0.95)' stroke-width='2'/%3e%3c/svg%3e") !important;
+            opacity: 1;
+        }
         .footer-custom .copyright {
             font-size: 0.875rem;
             opacity: 0.85;
@@ -269,6 +274,17 @@
             height: 44px;
             display: inline-flex;
             align-items: center;
+            margin-top: 0;
+            margin-bottom: 0;
+            margin-left: 0;
+            margin-right: 10px !important;
+            padding-top: 0;
+            padding-bottom: 0;
+            padding-left: 0;
+            padding-right: 0;
+        }
+        .nav-social-icon:last-child {
+            margin-right: 0 !important;
         }
         .nav-social-icon i { line-height: 1; }
 
@@ -284,6 +300,25 @@
         [data-bs-theme="light"] .nav-social-icon:hover {
             color: #495057 !important;
         }
+
+        /* --- Navbar Cart Icon --- */
+        .cart-icon i {
+            color: #f8f9fa;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        [data-bs-theme="light"] .cart-icon i {
+            color: #212529;
+        }
+
+        .cart-icon:hover i {
+            transform: translateY(-2px);
+            color: #adb5bd;
+        }
+
+        [data-bs-theme="light"] .cart-icon:hover i {
+            color: #495057;
+        }
         
         /* --- Utility Classes --- */
         .text-muted-custom {
@@ -294,6 +329,56 @@
         [data-bs-theme="light"] .text-muted-custom {
             color: #6c757d;
         }
+
+        [data-bs-theme="light"] .cart-modal-content h6,
+        [data-bs-theme="light"] .cart-modal-content .text-muted-custom,
+        [data-bs-theme="light"] .cart-modal-content .fw-bold,
+        [data-bs-theme="light"] .cart-modal-content #cart-total {
+            color: #000;
+        }
+
+        /* --- Add to Cart Breathing Effect --- */
+        .add-to-cart {
+            transition: transform 0.3s ease;
+        }
+        .add-to-cart:hover {
+            transform: scale(1.1);
+        }
+
+        .add-to-cart i {
+            transition: transform 0.2s ease;
+        }
+
+        .add-to-cart:hover i {
+            transform: translateY(-2px);
+        }
+
+        [data-bs-theme="dark"] .add-to-cart i {
+            color: #ffffff;
+        }
+
+        [data-bs-theme="light"] .add-to-cart i {
+            color: #000000;
+        }
+
+        /* Prevent Bootstrap outline buttons from filling on hover for Add to Cart */
+        [data-bs-theme="dark"] .add-to-cart.btn-outline-light,
+        [data-bs-theme="dark"] .add-to-cart.btn-outline-light:hover,
+        [data-bs-theme="dark"] .add-to-cart.btn-outline-light:focus,
+        [data-bs-theme="dark"] .add-to-cart.btn-outline-light:active {
+            background-color: transparent !important;
+            border-color: #f8f9fa;
+            color: #f8f9fa;
+        }
+
+        [data-bs-theme="light"] .add-to-cart.btn-outline-dark,
+        [data-bs-theme="light"] .add-to-cart.btn-outline-dark:hover,
+        [data-bs-theme="light"] .add-to-cart.btn-outline-dark:focus,
+        [data-bs-theme="light"] .add-to-cart.btn-outline-dark:active {
+            background-color: transparent !important;
+            border-color: #212529;
+            color: #212529;
+        }
     </style>
 </head>
 <body data-bs-theme="dark">
@@ -301,9 +386,9 @@
     <!-- Header / Navbar -->
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
+            <div class="container">
                 <!-- Brand -->
-                <a class="navbar-brand" href="index.html"><i class="bi bi-house-door-fill"></i> Home</a>
+                <a class="navbar-brand" href="index.html"><i class="bi bi-house-door-fill me-2"></i>Home</a>
                 
                 <!-- Mobile Toggle Button -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#myTopnav" aria-controls="myTopnav" aria-expanded="false" aria-label="Toggle navigation">
@@ -315,21 +400,30 @@
                     <!-- Left Side Links -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link" href="https://api.whatsapp.com/send?phone=2348139498928" target="_blank"><span class="bi bi-whatsapp"></span> WhatsApp</a>
+                            <a class="nav-link" href="https://api.whatsapp.com/send?phone=2348139498928" target="_blank"><span class="bi bi-whatsapp text-success me-2"></span>WhatsApp</a>
                         </li>
                     </ul>
                     
                     <!-- Right Side Items (Theme Toggle & Socials) -->
-                    <div class="d-flex align-items-center">
+                    <div class="d-flex align-items-center ps-3">
+                        <!-- Cart Icon (Desktop) -->
+                        <div class="me-3 position-relative cart-icon" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#cartModal">
+                            <i class="bi bi-cart fs-4"></i>
+                            <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">
+                                0
+                                <span class="visually-hidden">items in cart</span>
+                            </span>
+                        </div>
+
                         <!-- Theme Toggle -->
                         <div class="me-4 theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">
                             <i class="bi bi-moon-fill" id="themeIcon"></i>
                         </div>
                         
                         <!-- Social Icons -->
-                        <a href="https://web.facebook.com/jswithzikebuz/" target="_blank" class="me-3 nav-social-icon"><i class="bi bi-facebook fs-4"></i></a>
-                        <a href="#" class="me-3 nav-social-icon"><i class="bi bi-twitter-x fs-4"></i></a>
-                        <a href="#" class="me-3 nav-social-icon"><i class="bi bi-linkedin fs-4"></i></a>
+                        <a href="https://web.facebook.com/jswithzikebuz/" target="_blank" class="nav-social-icon"><i class="bi bi-facebook fs-4"></i></a>
+                        <a href="#" class="nav-social-icon"><i class="bi bi-twitter-x fs-4"></i></a>
+                        <a href="#" class="nav-social-icon"><i class="bi bi-linkedin fs-4"></i></a>
                         <a href="#" class="nav-social-icon"><i class="bi bi-instagram fs-4"></i></a>
                     </div>
                 </div>
@@ -350,8 +444,13 @@
                     <div class="card-body">
                         <h2 class="card-title"><strong>Rolex Diamond Wristwatch</strong></h2>
                         <h4 class="text-warning mb-3">$20.00</h4>
-                        <a href="https://buy.stripe.com/test_bJe3cnfCz2Vjchv8o377O01" class="btn btn-light btn-lg buy-button">Buy Now</a>
-                        <p class="card-text mt-3 text-muted-custom">The Rolex Day-Date 40 in 18kt Everose gold is the ultimate expression of prestige and refinement. Featuring a diamond-paved dial and diamond-set bezel, this timepiece combines technical mastery with brilliant luxury. Its iconic President bracelet, signature day and date display, and flawless craftsmanship make it a statement watch for those who demand elegance, exclusivity, and enduring style.</p>
+                        <div class="d-flex gap-2">
+                            <a href="https://buy.stripe.com/test_bJe3cnfCz2Vjchv8o377O01" class="btn btn-light btn-lg buy-button flex-grow-1">Buy Now</a>
+                            <button class="btn btn-outline-light btn-lg add-to-cart" data-id="rolex-watch" data-name="Rolex Diamond Wristwatch" data-price="20.00" data-price-id="price_1T5ATM04rfjoweArmHyzC0GD" data-image="\images\rolex-diamond.jpg">
+                                <i class="bi bi-cart-plus"></i>
+                            </button>
+                        </div>
+                        <p class="card-text mt-3 text-muted-custom">The Rolex Day-Date 40 in 18kt Everose gold is the ultimate expression of prestige and refinement. Featuring a diamond-paved dial and diamond-set bezel, this timepiece combines technical mastery with brilliant luxury.</p>
                     </div>
                 </div>
             </div>
@@ -367,8 +466,13 @@
                     <div class="card-body">
                         <h2 class="card-title"><strong>Vibe Coding E-Book</strong></h2>
                         <h4 class="text-warning mb-3">$10.00</h4>
-                        <a href="https://buy.stripe.com/test_7sY9ALgGD1Rf5T77jZ77O02" class="btn btn-light btn-lg buy-button">Buy Now</a>
-                        <p class="card-text mt-3 text-muted-custom">Vibe Coding is a modern, no-fluff guide that helps you think and build like a high-level developer. Packed with clear explanations, real-world examples, and practical frameworks, it shows you how to write cleaner code, ship faster, and create products with confidence-without getting lost in endless theory.</p>
+                        <div class="d-flex gap-2">
+                            <a href="https://buy.stripe.com/test_7sY9ALgGD1Rf5T77jZ77O02" class="btn btn-light btn-lg buy-button flex-grow-1">Buy Now</a>
+                            <button class="btn btn-outline-light btn-lg add-to-cart" data-id="vibe-coding-book" data-name="Vibe Coding E-Book" data-price="10.00" data-price-id="price_1T5Ad204rfjoweArVrIgDjWe" data-image="\images\vibe-coding-cover.jpg">
+                                <i class="bi bi-cart-plus"></i>
+                            </button>
+                        </div>
+                        <p class="card-text mt-3 text-muted-custom">Vibe Coding is a modern, no-fluff guide that helps you think and build like a high-level developer. With clear explanations and real-world examples, it shows you how to write cleaner code, ship faster, and create products with confidence.</p>
                     </div>
                 </div>
             </div>
@@ -392,7 +496,7 @@
                     <h5>Links</h5>
                     <ul class="list-unstyled footer-links">
                         <li class="mb-2"><a href="index.html" class="text-decoration-none"><i class="bi bi-house-door me-2"></i>Home</a></li>
-                        <li class="mb-2"><a href="#" class="text-decoration-none"><i class="bi bi-cart me-2"></i>Cart</a></li>
+                        <li class="mb-2"><a href="#" data-bs-toggle="modal" data-bs-target="#cartModal" class="text-decoration-none"><i class="bi bi-cart me-2"></i>Cart</a></li>
                         <li class="mb-2"><a href="https://api.whatsapp.com/send?phone=2348139498928" target="_blank" class="text-decoration-none"><i class="bi bi-whatsapp me-2"></i>WhatsApp</a></li>
                     </ul>
                 </div>
@@ -437,7 +541,7 @@
     <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header border-secondary">
+                <div class="modal-header">
                     <h5 class="modal-title" id="privacyModalLabel">Privacy Policy</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -452,7 +556,7 @@
     <div class="modal fade" id="tosModal" tabindex="-1" aria-labelledby="tosModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header border-secondary">
+                <div class="modal-header">
                     <h5 class="modal-title" id="tosModalLabel">Terms of Service</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -463,8 +567,192 @@
         </div>
     </div>
 
+    <!-- Cart Modal -->
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content cart-modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cartModalLabel"><i class="bi bi-cart me-2"></i>Your Cart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="cart-items-container">
+                        <!-- Cart items will be injected here -->
+                        <p class="text-center my-4">Your cart is empty.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="w-100 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Total: $<span id="cart-total">0.00</span></h5>
+                        <button type="button" class="btn btn-success" id="checkout-btn" disabled>Checkout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Application Logic -->
     <script>
+        // --- Cart Logic ---
+        const cart = JSON.parse(localStorage.getItem('miniStoreCart')) || [];
+        const cartBadge = document.getElementById('cart-badge');
+        const cartItemsContainer = document.getElementById('cart-items-container');
+        const cartTotalEl = document.getElementById('cart-total');
+        const checkoutBtn = document.getElementById('checkout-btn');
+
+        // Update UI on load
+        updateCartUI();
+
+        // Add to Cart Event Listeners
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', () => {
+                const product = {
+                    id: button.dataset.id,
+                    name: button.dataset.name,
+                    price: parseFloat(button.dataset.price),
+                    priceId: button.dataset.priceId,
+                    image: button.dataset.image,
+                    quantity: 1
+                };
+                addToCart(product);
+            });
+        });
+
+        function addToCart(product) {
+            const existingItem = cart.find(item => item.id === product.id);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push(product);
+            }
+            saveCart();
+            updateCartUI();
+            
+            // Show feedback (optional toast or animation)
+            const btn = document.querySelector(`button[data-id="${product.id}"]`);
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check-lg"></i>';
+            setTimeout(() => {
+                btn.innerHTML = originalContent;
+            }, 1000);
+        }
+
+        function removeFromCart(productId) {
+            const index = cart.findIndex(item => item.id === productId);
+            if (index > -1) {
+                cart.splice(index, 1);
+                saveCart();
+                updateCartUI();
+            }
+        }
+
+        function updateQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    saveCart();
+                    updateCartUI();
+                }
+            }
+        }
+
+        function saveCart() {
+            localStorage.setItem('miniStoreCart', JSON.stringify(cart));
+        }
+
+        function updateCartUI() {
+            // Update Badge
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            if (totalItems > 0) {
+                cartBadge.style.display = 'block';
+                cartBadge.textContent = totalItems;
+                checkoutBtn.disabled = false;
+            } else {
+                cartBadge.style.display = 'none';
+                checkoutBtn.disabled = true;
+            }
+
+            // Update Modal Content
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="text-center my-4">Your cart is empty.</p>';
+                cartTotalEl.textContent = '0.00';
+            } else {
+                let html = '<div class="list-group list-group-flush">';
+                let total = 0;
+
+                cart.forEach(item => {
+                    const itemTotal = item.price * item.quantity;
+                    total += itemTotal;
+                    html += `
+                        <div class="list-group-item bg-transparent d-flex align-items-center justify-content-between px-0">
+                            <div class="d-flex align-items-center">
+                                <img src="${item.image}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px;" class="me-3">
+                                <div>
+                                    <h6 class="mb-0">${item.name}</h6>
+                                    <small class="text-muted-custom">$${item.price.toFixed(2)} x ${item.quantity}</small>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="btn-group btn-group-sm me-3" role="group">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="updateQuantity('${item.id}', -1)">-</button>
+                                    <button type="button" class="btn btn-outline-secondary" disabled>${item.quantity}</button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="updateQuantity('${item.id}', 1)">+</button>
+                                </div>
+                                <span class="fw-bold me-3">$${itemTotal.toFixed(2)}</span>
+                                <button class="btn btn-sm btn-outline-danger" onclick="removeFromCart('${item.id}')"><i class="bi bi-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                cartItemsContainer.innerHTML = html;
+                cartTotalEl.textContent = total.toFixed(2);
+            }
+        }
+
+        // Checkout Logic
+        checkoutBtn.addEventListener('click', async () => {
+            if (
+                location.protocol === 'file:' ||
+                location.hostname === '127.0.0.1' ||
+                location.hostname === 'localhost'
+            ) {
+                alert('Checkout only works on the deployed site. Please use your Vercel URL.');
+                return;
+            }
+            const originalText = checkoutBtn.innerText;
+            checkoutBtn.innerText = 'Processing...';
+            checkoutBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ items: cart })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    window.location.href = data.url;
+                } else {
+                    alert('Checkout Error: ' + (data.error || 'Unknown error'));
+                    checkoutBtn.innerText = originalText;
+                    checkoutBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+                checkoutBtn.innerText = originalText;
+                checkoutBtn.disabled = false;
+            }
+        });
+
         // --- Dark/Light Mode Management ---
         const themeToggle = document.getElementById('themeToggle');
         const themeIcon = document.getElementById('themeIcon');
@@ -498,6 +786,7 @@
             // Select all cards and buttons to update their styles
             const cards = document.querySelectorAll('.card');
             const buyButtons = document.querySelectorAll('.buy-button');
+            const addToCartButtons = document.querySelectorAll('.add-to-cart');
             
             if (theme === 'dark') {
                 // --- Apply Dark Mode Styles ---
@@ -522,6 +811,12 @@
                     btn.classList.add('btn-light');
                 });
 
+                // Add to Cart Buttons
+                addToCartButtons.forEach(btn => {
+                    btn.classList.remove('btn-outline-dark');
+                    btn.classList.add('btn-outline-light');
+                });
+
             } else {
                 // --- Apply Light Mode Styles ---
                 themeIcon.className = 'bi bi-sun-fill';
@@ -543,6 +838,12 @@
                 buyButtons.forEach(btn => {
                     btn.classList.remove('btn-light');
                     btn.classList.add('btn-dark');
+                });
+
+                // Add to Cart Buttons
+                addToCartButtons.forEach(btn => {
+                    btn.classList.remove('btn-outline-light');
+                    btn.classList.add('btn-outline-dark');
                 });
             }
         }
