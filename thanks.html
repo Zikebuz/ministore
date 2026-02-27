@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSP: Allow local scripts, Stripe, and CDNs for security -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://maxcdn.bootstrapcdn.com https://cdn.jsdelivr.net https://checkout.stripe.com; img-src 'self' data: https://*.githubusercontent.com; connect-src 'self' https://checkout.stripe.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://checkout.stripe.com; font-src 'self' https://cdn.jsdelivr.net;">
+    
+    <title>Order Confirmed - Mini Store</title>
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        /* --- Base Theme Styles --- */
+        body {
+            background-color: #2b3035; /* Default Dark Mode */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #f8f9fa; /* Light text for dark background */
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* --- Layout --- */
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Card Component --- */
+        .card {
+            background-color: #212529; /* Dark card background */
+            color: #f8f9fa;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        /* --- Light Mode Overrides --- */
+        [data-bs-theme="light"] .card {
+            background-color: #ffffff;
+            color: #212529;
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body data-bs-theme="dark">
+
+    <!-- Main Content Area -->
+    <div class="content-wrapper">
+        <div class="container text-center">
+            <!-- Order Confirmation Card -->
+            <div class="card p-5 shadow-lg mx-auto" style="max-width: 600px;">
+                <h1 class="display-4 text-success">Order Confirmed! 🎉</h1>
+                <p class="lead" id="thanks-message">Thank you for your purchase.</p>
+                <p id="sub-message">We are processing your order now.</p>
+                <hr>
+                <a href="index.html" class="btn btn-primary">Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Logic Script -->
+    <script>
+        // --- Theme Management ---
+        const htmlElement = document.documentElement;
+
+        // Retrieve saved theme or default to dark
+        const storedTheme = localStorage.getItem('theme');
+        const currentTheme = storedTheme || 'dark';
+
+        // Apply theme on load
+        setTheme(currentTheme);
+
+        /**
+         * Applies the selected theme to the document.
+         * Note: This page only has a Body and Card to style, as the Navbar/Footer were removed.
+         * @param {string} theme - 'dark' or 'light'
+         */
+        function setTheme(theme) {
+            htmlElement.setAttribute('data-bs-theme', theme);
+            
+            if (theme === 'dark') {
+                // Apply Dark Mode Styles
+                document.body.style.backgroundColor = '#2b3035';
+                document.body.style.color = '#f8f9fa';
+            } else {
+                // Apply Light Mode Styles
+                document.body.style.backgroundColor = '#ffffff';
+                document.body.style.color = '#212529';
+            }
+        }
+    </script>
+    
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Download Logic Script -->
+    <script>
+        // Parse URL parameters to check for digital product type
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        if (urlParams.get('type') === 'digital') {
+            // Update UI for digital product success
+            document.getElementById('thanks-message').innerText = "Thank you for purchasing Vibe Coding!";
+            document.getElementById('sub-message').innerText = "Preparing your download...";
+
+            // Wait 2 seconds before initiating download
+            setTimeout(() => {
+                // Check if running in a local development environment
+                const isLocal = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
+
+                if (isLocal) {
+                    console.log("Local Test Mode: Downloading directly from private folder.");
+                    // In local test, point to the local file copy
+                    window.location.href = "./private/vibe-coding-guide.pdf"; 
+                } else {
+                    // In production (Vercel), use the secure API endpoint
+                    window.location.href = "/api/download";
+                }
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

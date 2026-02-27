@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Store - Premium Digital Products</title>
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        /* --- Global Styles --- */
+        body {
+            background-color: #2b3035; /* Dark Mode Default Background */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #f8f9fa; /* Light Text */
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Flex wrapper to push footer to bottom */
+        .content-wrapper {
+            flex: 1;
+        }
+
+        /* --- Card Styling --- */
+        .card {
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); /* Dark Mode Shadow */
+            transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #212529; /* Dark Card Background */
+            color: #f8f9fa;
+        }
+
+        /* Light Mode Card Overrides */
+        [data-bs-theme="light"] .card {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+            box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.08); /* Refined Light Mode Shadow */
+        }
+
+        /* Card Hover Effect */
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12); /* Lift & Enhance Shadow */
+        }
+
+        .product-img {
+            padding: 10px;
+            border-radius: 12px;
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+        
+        /* --- Navbar Styling --- */
+        .navbar {
+            background-color: #212529; /* Dark Mode Navbar */
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Light Mode Navbar */
+        [data-bs-theme="light"] .navbar {
+            background-color: #ffffff !important;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: #f8f9fa;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+
+        /* Light Mode Navbar Links */
+        [data-bs-theme="light"] .navbar a {
+            color: #212529;
+        }
+
+        /* Navbar Link Hover */
+        .navbar a:hover {
+            color: #adb5bd; /* Gray Hover */
+        }
+
+        [data-bs-theme="light"] .navbar a:hover {
+            color: #000000; /* Deep Black for Contrast */
+            font-weight: 500;
+        }
+
+        .navbar a.active {
+            background-color: #adb5bd;
+            color: white;
+        }
+        
+        /* Navbar Toggler (Hamburger Menu) */
+        [data-bs-theme="light"] .navbar-toggler {
+            border-color: rgba(0,0,0,0.1);
+        }
+        [data-bs-theme="light"] .navbar-toggler-icon {
+            /* Dark Icon for Light Mode */
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+        }
+        
+        /* --- Footer Styling --- */
+        .footer-custom {
+            padding-top: 40px;
+            padding-bottom: 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Footer Links */
+        .footer-links a {
+            transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+            color: #f8f9fa;
+            display: inline-block;
+        }
+
+        [data-bs-theme="light"] .footer-links a {
+            color: #212529;
+        }
+
+        .footer-links a:hover {
+            color: #adb5bd !important;
+            transform: scale(1.05); /* Breathing Effect */
+        }
+
+        [data-bs-theme="light"] .footer-links a:hover {
+            color: #000000 !important; /* Deep Black Contrast */
+        }
+
+        /* Footer Social Icons */
+        .footer-icons a {
+            transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+            color: #f8f9fa;
+            margin-right: 15px;
+        }
+
+        [data-bs-theme="light"] .footer-icons a {
+            color: #212529;
+        }
+
+        .footer-icons a:hover {
+            transform: scale(1.2);
+            color: #adb5bd;
+        }
+
+        [data-bs-theme="light"] .footer-icons a:hover {
+            color: #000000;
+        }
+
+        /* Payment Icons */
+        .payment-icon {
+            font-size: 2rem;
+            margin-right: 10px;
+            color: #adb5bd;
+        }
+
+        [data-bs-theme="light"] .payment-icon {
+            color: #495057;
+        }
+        
+        /* Footer Bottom Links (Privacy/Terms) */
+        .footer-bottom-link {
+            color: #f8f9fa;
+            transition: color 0.3s ease;
+        }
+
+        [data-bs-theme="light"] .footer-bottom-link {
+            color: #212529;
+        }
+
+        .footer-bottom-link:hover {
+            color: #adb5bd;
+        }
+        
+        /* --- Theme Toggle Button --- */
+        .theme-toggle {
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        .theme-toggle:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        /* --- Modal Styling --- */
+        .policy-links a {
+            color: #adb5bd;
+            text-decoration: none;
+            margin: 0 15px;
+            transition: color 0.3s ease;
+        }
+        
+        .policy-links a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        /* --- Navbar Social Icons --- */
+        .nav-social-icon {
+            color: #f8f9fa;
+            transition: color 0.3s ease, transform 0.3s ease;
+            text-decoration: none;
+        }
+
+        [data-bs-theme="light"] .nav-social-icon {
+            color: #212529;
+        }
+
+        .nav-social-icon:hover {
+            color: #adb5bd !important;
+            transform: translateY(-2px);
+        }
+
+        [data-bs-theme="light"] .nav-social-icon:hover {
+            color: #495057 !important;
+        }
+        
+        /* --- Utility Classes --- */
+        .text-muted-custom {
+            color: #ced4da;
+            transition: color 0.3s ease;
+        }
+
+        [data-bs-theme="light"] .text-muted-custom {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body data-bs-theme="dark">
+
+    <!-- Header / Navbar -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <!-- Brand -->
+                <a class="navbar-brand" href="index.html"><i class="bi bi-house-door-fill"></i> Home</a>
+                
+                <!-- Mobile Toggle Button -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#myTopnav" aria-controls="myTopnav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <!-- Navbar Content -->
+                <div class="collapse navbar-collapse" id="myTopnav">
+                    <!-- Left Side Links -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://api.whatsapp.com/send?phone=2348139498928" target="_blank"><span class="bi bi-whatsapp"></span> WhatsApp</a>
+                        </li>
+                    </ul>
+                    
+                    <!-- Right Side Items (Theme Toggle & Socials) -->
+                    <div class="d-flex align-items-center">
+                        <!-- Theme Toggle -->
+                        <div class="me-4 theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">
+                            <i class="bi bi-moon-fill" id="themeIcon"></i>
+                        </div>
+                        
+                        <!-- Social Icons -->
+                        <a href="https://web.facebook.com/jswithzikebuz/" target="_blank" class="me-3 nav-social-icon"><i class="bi bi-facebook fs-4"></i></a>
+                        <a href="#" class="me-3 nav-social-icon"><i class="bi bi-twitter-x fs-4"></i></a>
+                        <a href="#" class="me-3 nav-social-icon"><i class="bi bi-linkedin fs-4"></i></a>
+                        <a href="#" class="nav-social-icon"><i class="bi bi-instagram fs-4"></i></a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="content-wrapper container">
+        
+        <!-- Product 1: Rolex Watch -->
+        <div class="card mb-4 mt-5" style="max-width: 900px; margin: 20px auto;">
+            <div class="row no-gutters align-items-center">
+                <div class="col-md-4 text-center">
+                    <img src="\images\rolex-diamond.jpg" class="product-img" alt="Rolex Diamond Watch">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h2 class="card-title"><strong>Rolex Diamond Wristwatch</strong></h2>
+                        <h4 class="text-warning mb-3">$20.00</h4>
+                        <a href="https://buy.stripe.com/test_bJe3cnfCz2Vjchv8o377O01" class="btn btn-light btn-lg">Buy Now</a>
+                        <p class="card-text mt-3 text-muted-custom">The Rolex Day-Date 40 in 18kt Everose gold is the ultimate expression of prestige and refinement. Featuring a diamond-paved dial and diamond-set bezel, this timepiece combines technical mastery with brilliant luxury. Its iconic President bracelet, signature day and date display, and flawless craftsmanship make it a statement watch for those who demand elegance, exclusivity, and enduring style.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product 2: Vibe Coding E-Book -->
+        <div class="card mb-4" style="max-width: 900px; margin: 20px auto;">
+            <div class="row no-gutters align-items-center">
+                <div class="col-md-4 text-center">
+                    <img src="\images\vibe-coding-cover.jpg" class="product-img" alt="Vibe Coding Book">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h2 class="card-title"><strong>Vibe Coding E-Book</strong></h2>
+                        <h4 class="text-warning mb-3">$10.00</h4>
+                        <a href="https://buy.stripe.com/test_7sY9ALgGD1Rf5T77jZ77O02" class="btn btn-light btn-lg">Buy Now</a>
+                        <p class="card-text mt-3 text-muted-custom">Vibe Coding is a modern, no-fluff guide that helps you think and build like a high-level developer. Packed with clear explanations, real-world examples, and practical frameworks, it shows you how to write cleaner code, ship faster, and create products with confidence—without getting lost in endless theory.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark mt-auto footer-custom">
+        <div class="container">
+            <div class="row">
+                <!-- About Column -->
+                <div class="col-md-3 mb-3">
+                    <h5>About Us</h5>
+                    <p>
+                        Mini Store is an online store for Mini Store. We offer a wide range of digital products including software, web apps, ebooks, and more.
+                    </p>
+                </div>
+                
+                <!-- Links Column -->
+                <div class="col-md-3 mb-3">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><a href="index.html" class="text-decoration-none"><i class="bi bi-house-door me-2"></i>Home</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none"><i class="bi bi-cart me-2"></i>Cart</a></li>
+                        <li class="mb-2"><a href="https://api.whatsapp.com/send?phone=2348139498928" target="_blank" class="text-decoration-none"><i class="bi bi-whatsapp me-2"></i>WhatsApp</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Payment Options Column -->
+                <div class="col-md-3 mb-3">
+                    <h5>Payment Options</h5>
+                    <div class="d-flex">
+                        <i class="bi bi-credit-card-2-front payment-icon"></i>
+                        <i class="bi bi-credit-card payment-icon"></i>
+                        <i class="bi bi-stripe payment-icon"></i>
+                    </div>
+                </div>
+                
+                <!-- Social Follow Column -->
+                <div class="col-md-3 mb-3">
+                    <h5>Follow Us</h5>
+                    <div class="d-flex footer-icons">
+                        <a href="https://web.facebook.com/jswithzikebuz/" target="_blank"><i class="bi bi-facebook fs-2"></i></a>
+                        <a href="#"><i class="bi bi-twitter-x fs-2"></i></a>
+                        <a href="#"><i class="bi bi-linkedin fs-2"></i></a>
+                        <a href="#"><i class="bi bi-instagram fs-2"></i></a>
+                    </div>
+                </div>                                
+            </div>
+            
+            <hr>
+            
+            <!-- Footer Bottom -->
+            <div class="text-center mb-3">
+                    <a href="#" class="footer-bottom-link text-decoration-none me-3" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a>
+                    <span>|</span>
+                    <a href="#" class="footer-bottom-link text-decoration-none ms-3" data-bs-toggle="modal" data-bs-target="#tosModal">Terms of Service</a>
+                </div>
+            <div class="text-center">
+                <p class="mb-0">Mini Store &copy; <span id="year"></span> | All rights reserved | Designed by Ebuka</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Privacy Policy Modal -->
+    <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background-color: var(--bs-body-bg); color: var(--bs-body-color);">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title" id="privacyModalLabel">Privacy Policy</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>We value your privacy. This policy outlines how we collect, use, and protect your personal information when you use our website. We do not sell your data to third parties. All payment processing is securely handled by Stripe. By using our site, you consent to our privacy policy.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms of Service Modal -->
+    <div class="modal fade" id="tosModal" tabindex="-1" aria-labelledby="tosModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background-color: var(--bs-body-bg); color: var(--bs-body-color);">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title" id="tosModalLabel">Terms of Service</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>By using this site, you agree that the content provided is for informational purposes. All projects, code samples, and intellectual property are property of Mini Store unless otherwise stated. Unauthorized duplication or commercial use without consent is prohibited.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        // --- Dark/Light Mode Management ---
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const htmlElement = document.documentElement;
+        const navbar = document.querySelector('.navbar');
+        const footer = document.querySelector('.footer-custom');
+
+        // Check local storage or system preference
+        const storedTheme = localStorage.getItem('theme');
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const currentTheme = storedTheme || 'dark'; // Default to dark as requested
+
+        // Apply theme on initial load
+        setTheme(currentTheme);
+
+        // Toggle Theme Event Listener
+        themeToggle.addEventListener('click', () => {
+            const newTheme = htmlElement.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
+            setTheme(newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        /**
+         * Applies the selected theme to the entire application.
+         * Updates Body, Navbar, Footer, Buttons, and Icons.
+         * @param {string} theme - 'dark' or 'light'
+         */
+        function setTheme(theme) {
+            htmlElement.setAttribute('data-bs-theme', theme);
+            
+            // Select all cards and buttons to update their styles
+            const cards = document.querySelectorAll('.card');
+            const buyButtons = document.querySelectorAll('.btn-light');
+            
+            if (theme === 'dark') {
+                // --- Apply Dark Mode Styles ---
+                themeIcon.className = 'bi bi-moon-fill';
+                themeIcon.style.color = '#fff';
+                
+                // Navbar
+                navbar.classList.remove('navbar-light', 'bg-white');
+                navbar.classList.add('navbar-dark', 'bg-dark');
+                
+                // Body
+                document.body.style.backgroundColor = '#2b3035';
+                document.body.style.color = '#f8f9fa';
+
+                // Footer
+                footer.classList.remove('bg-light', 'text-dark');
+                footer.classList.add('bg-dark', 'text-light');
+                
+                // Buttons
+                buyButtons.forEach(btn => {
+                    btn.classList.remove('btn-dark');
+                    btn.classList.add('btn-light');
+                });
+
+            } else {
+                // --- Apply Light Mode Styles ---
+                themeIcon.className = 'bi bi-sun-fill';
+                themeIcon.style.color = '#fdb813'; // Sun yellow
+                
+                // Navbar
+                navbar.classList.remove('navbar-dark', 'bg-dark');
+                navbar.classList.add('navbar-light', 'bg-white');
+                
+                // Body
+                document.body.style.backgroundColor = '#ffffff'; // Explicit white
+                document.body.style.color = '#212529'; // Dark text
+
+                // Footer
+                footer.classList.remove('bg-dark', 'text-light');
+                footer.classList.add('bg-light', 'text-dark');
+                
+                // Buttons (Invert for contrast)
+                buyButtons.forEach(btn => {
+                    btn.classList.remove('btn-light');
+                    btn.classList.add('btn-dark');
+                });
+            }
+        }
+
+        // Set current year in footer
+        document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
