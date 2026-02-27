@@ -9,3 +9,8 @@ Thumbs.db
 
 # VSCode
 .vscode/
+
+# Private Product Files
+private/
+
+.vercel
